@@ -105,7 +105,7 @@ const char* MQTT_CLIENT_ID = "m5stack-plus2";
 const char* TOPIC_TELEMETRY = "jarvis/m5stack/telemetry";
 const char* TOPIC_STATUS    = "jarvis/m5stack/status";   // online/offline (Last Will)
 const uint32_t MQTT_INTERVAL = 10000;   // periodo de publicación (ms) — solo en pantalla Sensores
-const uint32_t MQTT_LEVEL_INTERVAL = 200; // periodo del nivel (ms) — casi en vivo, solo en pantalla Nivel
+const uint32_t MQTT_LEVEL_INTERVAL = 50;  // periodo del nivel (ms) = 20 Hz — casi en vivo, solo en pantalla Nivel
 const uint32_t MQTT_RETRY_MS = 5000;    // reintento de (re)conexión
 uint32_t lastMqttPublish = 0;
 uint32_t lastMqttRetry   = 0;
@@ -1393,6 +1393,7 @@ void setup() {
   setCpuFrequencyMhz(cpuFreq);
   pinMode(LED_PIN, OUTPUT); digitalWrite(LED_PIN, LOW);
   WiFi.setAutoReconnect(false);      // sin reconexión automática: el usuario reconecta a mano
+  WiFi.setSleep(false);              // desactiva el modem-sleep del WiFi: MUCHA menos latencia en MQTT (clave para el nivel en vivo)
   mqtt.setServer(MQTT_HOST, MQTT_PORT);
   mqtt.setSocketTimeout(4);          // no bloquear la UI demasiado si el broker no responde
   carousel.createSprite(150, 113);   // panel derecho: x=90..239, y=22..134
